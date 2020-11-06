@@ -20,6 +20,8 @@ const widgetSizes = {
   large: { width: 987, height: 1035 },
 }
 
+const useLogarithmicScale = true
+
 class LineChart {
   // LineChart by https://kevinkub.de/
   constructor(width, height, seriesA, seriesB) {
@@ -336,6 +338,11 @@ async function createWidget(widgetSize) {
   let sumCases = getTimeline(apidata_Timeline_lines, loc[0], 6).reverse()
   let sumCured = getTimeline(apidata_Timeline_lines, loc[0], 12).reverse()
   let infected = sumCases.filter(x => !sumCured.includes(x));
+  
+  if (useLogarithmicScale) {
+    data = data.map(Math.log)
+    infected = infected.map(Math.log)
+  }
 
   let chart = new LineChart(widgetSize.width, widgetSize.height, data, infected).configure((ctx, pathA, pathB) => {
     ctx.opaque = false;
